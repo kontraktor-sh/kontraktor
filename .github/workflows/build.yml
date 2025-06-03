@@ -21,7 +21,6 @@ jobs:
 
       - name: Install dependencies
         run: go mod download
-        working-directory: kontraktor
 
       - name: Run linter
         uses: golangci/golangci-lint-action@v4
@@ -31,7 +30,6 @@ jobs:
 
       - name: Run tests
         run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
-        working-directory: kontraktor
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
