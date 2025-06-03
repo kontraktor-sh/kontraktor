@@ -1,0 +1,9 @@
+tasks:
+  docker-build:
+    desc: "Build a docker image"
+    args:
+      - name: image
+        type: string
+        default: "my-image"
+    cmds:
+      - echo "Building image  ${image}"

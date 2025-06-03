@@ -1,7 +1,7 @@
 version: 0.3
 
 imports:
-  - modules/docker.ktr.yml
+  - https://github.com/rafaelherik/kontraktor-sh.git//modules/docker.ktr.yml
 
 environment:
   FOO: bar
