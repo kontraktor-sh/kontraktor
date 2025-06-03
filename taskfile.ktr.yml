@@ -1,0 +1,49 @@
+version: 0.3
+
+imports:
+  - modules/docker.ktr.yml
+
+environment:
+  FOO: bar
+  PATH: /custom/path:${PATH}
+
+tasks:
+  hello:
+    desc: "Print env"
+    cmds:
+      - echo "FOO is $FOO"
+  hello2:
+    desc: "Print hello world"
+    args:
+      - name: username
+        type: string
+        default: "rafael"
+    environment:
+      FOO: "bar2"
+    cmds:
+      - echo "Hello, ${username}! $FOO"
+      - task: greet
+      - uses: docker-build
+        args:
+          image: "rafael/kontraktor"
+  greet:
+    desc: "Print a custom greeting"
+    cmds:
+      - echo "Greetings from Kontraktor!"
+  sequence:
+    desc: "Run hello and greet in sequence"
+    cmds:
+      - echo "Starting sequence..."
+      - echo "Hello, world!"
+      - echo "Greetings from Kontraktor!"
+      - echo "Sequence complete." 
+
+
+
+
+
+
+
+  
+  
+  

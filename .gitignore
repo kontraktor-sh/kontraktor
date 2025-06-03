@@ -3,6 +3,39 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Go build artifacts and dependencies
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace and module files
+vendor/
+Gopkg.lock
+Gopkg.toml
+
+# Go module cache
+/pkg/
+/bin/
+
+# Go coverage files
+*.coverprofile
+*.cov
+*.coverage
+*.cover
+
+# GoLand/JetBrains project files
+.idea/
+
+# Go temp files
+*.tmp
+
+# Go build output
+kontraktor
+
 # User-specific files
 *.rsuser
 *.suo
