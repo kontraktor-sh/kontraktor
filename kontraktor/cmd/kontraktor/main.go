@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/kontraktor-sh/kontraktor/internal/taskfile"
-	"github.com/kontraktor-sh/kontraktor/internal/vault"
+	"github.com/kontraktor-sh/kontraktor/kontraktor/internal/taskfile"
+	"github.com/kontraktor-sh/kontraktor/kontraktor/internal/vault"
 	"github.com/spf13/cobra"
 )
 

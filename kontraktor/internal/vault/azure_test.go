@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/rafaelherik/kontraktor-sh/internal/taskfile"
+	"github.com/kontraktor-sh/kontraktor/kontraktor/internal/taskfile"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
