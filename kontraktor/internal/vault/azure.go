@@ -7,7 +7,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/keyvault/azsecrets"
-	"github.com/rafaelherik/kontraktor-sh/internal/taskfile"
+	"github.com/kontraktor-sh/kontraktor/kontraktor/internal/taskfile"
 )
 
 // AzureClient defines the interface for Azure Key Vault operations
