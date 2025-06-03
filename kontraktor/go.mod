@@ -1,4 +1,4 @@
-module github.com/kontraktor-sh/kontraktor
+module github.com/kontraktor-sh/kontraktor/kontraktor
 
 go 1.24.3
 
