@@ -5,9 +5,11 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"context"
 
 	"github.com/spf13/cobra"
 	"github.com/rafaelherik/kontraktor-sh/internal/taskfile"
+	"github.com/rafaelherik/kontraktor-sh/kontraktor/internal/vault"
 )
 
 func main() {
@@ -185,6 +187,19 @@ func executeTaskWithArgs(taskName string, tf *taskfile.Taskfile, visited map[str
 	for k, v := range task.Environment {
 		mergedEnv[k] = v
 	}
+	// Fetch Azure Key Vault secrets if configured
+	ctx := context.Background()
+	if tf.Vaults != nil && tf.Vaults.AzureKeyVault != nil {
+		for _, config := range tf.Vaults.AzureKeyVault {
+			secrets, err := vault.FetchAzureSecrets(ctx, config)
+			if err != nil {
+				return fmt.Errorf("failed to fetch Azure secrets: %w", err)
+			}
+			for k, v := range secrets {
+				mergedEnv[k] = v
+			}
+		}
+	}
 	fmt.Printf("Running task '%s': %s\n", taskName, task.Desc)
 	for i, cmd := range task.Cmds {
 		currentStepPath := append(stepPath, i+1)
@@ -214,6 +229,7 @@ func executeTaskWithArgs(taskName string, tf *taskfile.Taskfile, visited map[str
 		for k, v := range mergedArgs {
 			cmdStr = strings.ReplaceAll(cmdStr, "${"+k+"}", v)
 		}
+		// Do NOT substitute secrets into cmdStr; only set as env vars
 		fmt.Printf("[%s] $ %s\n", stepNum, cmdStr)
 		if err := runShellCommand(cmdStr, mergedEnv); err != nil {
 			return fmt.Errorf("command failed: %w", err)

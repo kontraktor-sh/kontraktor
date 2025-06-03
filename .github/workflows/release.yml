@@ -1,0 +1,32 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, darwin]
+        goarch: [amd64, arm64]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Build
+        run: |
+          cd kontraktor
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o kontraktor-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/ktr
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: kontraktor-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: kontraktor/kontraktor-${{ matrix.goos }}-${{ matrix.goarch }}

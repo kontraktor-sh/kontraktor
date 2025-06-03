@@ -1,4 +1,5 @@
-// Package taskfile provides structures and parsing for Kontraktor taskfiles.
+// import.go
+// Handles loading, downloading, and cloning of imported taskfiles for Kontraktor.
 package taskfile
 
 import (
@@ -11,78 +12,6 @@ import (
 	"strings"
 	"gopkg.in/yaml.v3"
 )
-
-// Taskfile represents the root of a taskfile.ktr.yml
-// version: 0.3
-// tasks: map of task name to Task
-//
-type Taskfile struct {
-	Version     string            `yaml:"version"`
-	Imports     []string          `yaml:"imports,omitempty"`
-	Environment map[string]string `yaml:"environment,omitempty"`
-	Tasks       map[string]Task   `yaml:"tasks"`
-}
-
-// TaskCmd represents either a shell command or a task reference
-// If Task is non-empty, it's a task reference; otherwise, use Cmd
-//
-type TaskCmd struct {
-	Cmd  string
-	Task string
-	Uses string
-	Args map[string]interface{}
-}
-
-// UnmarshalYAML implements custom YAML unmarshalling for TaskCmd
-func (t *TaskCmd) UnmarshalYAML(value *yaml.Node) error {
-	if value.Kind == yaml.ScalarNode {
-		t.Cmd = value.Value
-		return nil
-	}
-	if value.Kind == yaml.MappingNode {
-		for i := 0; i < len(value.Content); i += 2 {
-			k := value.Content[i]
-			v := value.Content[i+1]
-			if k.Value == "task" {
-				t.Task = v.Value
-			}
-			if k.Value == "uses" {
-				t.Uses = v.Value
-			}
-			if k.Value == "args" {
-				var m map[string]interface{}
-				if err := v.Decode(&m); err != nil {
-					return err
-				}
-				t.Args = m
-			}
-		}
-		return nil
-	}
-	return fmt.Errorf("invalid cmd entry: %v", value)
-}
-
-// TaskArg represents an argument for a task
-// name: argument name
-// type: argument type (string, [], bool, number)
-// default: default value (interface{})
-type TaskArg struct {
-	Name    string      `yaml:"name"`
-	Type    string      `yaml:"type"`
-	Default interface{} `yaml:"default,omitempty"`
-}
-
-// Task represents a single task in the taskfile
-// desc: description
-// args: list of task arguments
-// cmds: list of shell commands
-//
-type Task struct {
-	Desc        string            `yaml:"desc"`
-	Args        []TaskArg         `yaml:"args,omitempty"`
-	Cmds        []TaskCmd         `yaml:"cmds"`
-	Environment map[string]string `yaml:"environment,omitempty"`
-}
 
 // ParseTaskfile reads and parses a taskfile.ktr.yml from the given path, recursively loading imports.
 func ParseTaskfile(path string) (*Taskfile, error) {
@@ -132,14 +61,17 @@ func ParseTaskfile(path string) (*Taskfile, error) {
 	return &tf, nil
 }
 
+// isHTTPImport returns true if the path is an HTTP(S) URL.
 func isHTTPImport(path string) bool {
 	return strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://")
 }
 
+// isGitImport returns true if the path is a git repo import (contains .git//).
 func isGitImport(path string) bool {
 	return strings.Contains(path, ".git//")
 }
 
+// downloadToTemp downloads a file from a URL to a temp file and returns its path.
 func downloadToTemp(url string) (string, error) {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -160,6 +92,7 @@ func downloadToTemp(url string) (string, error) {
 	return tmpFile.Name(), nil
 }
 
+// cloneAndGetFile clones a git repo and returns the path to the specified file within it.
 func cloneAndGetFile(gitImport string) (string, error) {
 	parts := strings.SplitN(gitImport, ".git//", 2)
 	if len(parts) != 2 {

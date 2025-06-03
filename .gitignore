@@ -33,8 +33,7 @@ Gopkg.toml
 # Go temp files
 *.tmp
 
-# Go build output
-kontraktor
+
 
 # User-specific files
 *.rsuser

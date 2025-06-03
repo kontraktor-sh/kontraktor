@@ -17,10 +17,7 @@ rules:
     content: |
       You are contributing to **Kontraktor**, an OSS builder‑helper written in Go.
       Key architecture tenets (full details in docs/architecture.md):
-      • Central Configuration Library backed by DuckDB (non‑secret vars).
       • Secret aggregation only (Azure KV, AWS SM, HashiCorp Vault) – never persist secrets.
-      • Versioned YAML taskfiles (`taskfile.ktr.yml` version 0.3) executed by the CLI.
-      • Exposed API (REST+gRPC) documented via OpenAPI 3.1.
       • Terraform provider uses terraform‑plugin‑framework.
       • Codebase root layout: cmd/, internal/, provider‑terraform/, web/.
       Always respect these constraints in every snippet.
