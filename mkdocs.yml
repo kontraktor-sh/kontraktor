@@ -1,0 +1,43 @@
+site_name: Kontraktor Documentation
+site_description: Documentation for Kontraktor - A builder-helper for environment configuration, secret aggregation, and developer task automation
+site_author: Kontraktor Team
+repo_url: https://github.com/kontraktor-sh/kontraktor
+repo_name: kontraktor-sh/kontraktor
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - search.highlight
+    - search.share
+    - search.suggest
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quickstart.md
+  - User Guide:
+    - Taskfile Format: user-guide/taskfile-format.md
+    - Environment Variables: user-guide/environment-variables.md
+    - Secret Management: user-guide/secret-management.md
+    - Task Execution: user-guide/task-execution.md
+  - Advanced Topics:
+    - Azure Key Vault Integration: advanced/azure-keyvault.md
+    - Task Dependencies: advanced/task-dependencies.md
+    - Importing Tasks: advanced/importing-tasks.md
+  - Contributing:
+    - Development Guide: contributing/development.md
+    - Code of Conduct: contributing/code-of-conduct.md
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed
+  - admonition
+  - footnotes
+  - toc:
+      permalink: true 

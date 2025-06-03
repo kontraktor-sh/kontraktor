@@ -1,15 +1,16 @@
 package main
 
 import (
+	"bufio"
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
-	"context"
 
+	"github.com/kontraktor-sh/kontraktor/internal/taskfile"
+	"github.com/kontraktor-sh/kontraktor/internal/vault"
 	"github.com/spf13/cobra"
-	"github.com/rafaelherik/kontraktor-sh/internal/taskfile"
-	"github.com/rafaelherik/kontraktor-sh/kontraktor/internal/vault"
 )
 
 func main() {
@@ -75,12 +76,41 @@ func main() {
 
 func runShellCommand(cmdStr string, env map[string]string) error {
 	cmd := exec.Command("bash", "-c", cmdStr)
-	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if env != nil {
 		cmd.Env = mergeWithOSEnv(env)
 	}
-	return cmd.Run()
+
+	// Create pipes for stdout
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return fmt.Errorf("failed to create stdout pipe: %w", err)
+	}
+
+	// Start the command
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("failed to start command: %w", err)
+	}
+
+	// Read and mask stdout
+	scanner := bufio.NewScanner(stdout)
+	for scanner.Scan() {
+		line := scanner.Text()
+		// Mask any secret values in the output
+		for _, v := range env {
+			if strings.Contains(line, v) {
+				line = strings.ReplaceAll(line, v, "<<SENSITIVE>>")
+			}
+		}
+		fmt.Println(line)
+	}
+
+	// Wait for the command to complete
+	if err := cmd.Wait(); err != nil {
+		return fmt.Errorf("command failed: %w", err)
+	}
+
+	return scanner.Err()
 }
 
 // Helper to merge custom env with os.Environ
@@ -229,7 +259,18 @@ func executeTaskWithArgs(taskName string, tf *taskfile.Taskfile, visited map[str
 		for k, v := range mergedArgs {
 			cmdStr = strings.ReplaceAll(cmdStr, "${"+k+"}", v)
 		}
-		// Do NOT substitute secrets into cmdStr; only set as env vars
+		// Handle secrets substitution
+		if tf.Vaults != nil && tf.Vaults.AzureKeyVault != nil {
+			for _, config := range tf.Vaults.AzureKeyVault {
+				secrets, err := vault.FetchAzureSecrets(ctx, config)
+				if err != nil {
+					return fmt.Errorf("failed to fetch Azure secrets: %w", err)
+				}
+				for k, v := range secrets {
+					cmdStr = strings.ReplaceAll(cmdStr, "${secrets."+k+"}", v)
+				}
+			}
+		}
 		fmt.Printf("[%s] $ %s\n", stepNum, cmdStr)
 		if err := runShellCommand(cmdStr, mergedEnv); err != nil {
 			return fmt.Errorf("command failed: %w", err)
@@ -249,4 +290,4 @@ func formatStepNum(stepPath []int, total int) string {
 		parts = append(parts, fmt.Sprintf("%d", n))
 	}
 	return fmt.Sprintf("%s/%d", strings.Join(parts, "."), total)
-} 
+}

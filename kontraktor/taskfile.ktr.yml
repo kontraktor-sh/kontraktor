@@ -7,6 +7,13 @@ environment:
   FOO: bar
   PATH: /custom/path:${PATH}
 
+vaults:
+  azure_keyvault:
+    kontraktor:
+      keyvault_name: "kontraktor"
+      secrets:
+        FOO2: "foo"
+
 tasks:
   hello:
     desc: "Print env"
@@ -21,7 +28,7 @@ tasks:
     environment:
       FOO: "bar2"
     cmds:
-      - echo "Hello, ${username}! $FOO"
+      - echo "Hello, ${username}! ${secrets.FOO2}"
       - task: greet
       - uses: docker-build
         args:
