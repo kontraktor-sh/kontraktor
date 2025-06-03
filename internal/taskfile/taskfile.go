@@ -6,10 +6,9 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
-
-	git "github.com/go-git/go-git/v5"
 	"gopkg.in/yaml.v3"
 )
 
@@ -87,6 +86,9 @@ type Task struct {
 
 // ParseTaskfile reads and parses a taskfile.ktr.yml from the given path, recursively loading imports.
 func ParseTaskfile(path string) (*Taskfile, error) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return nil, fmt.Errorf("taskfile not found: %s", path)
+	}
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("open taskfile: %w", err)
@@ -96,21 +98,21 @@ func ParseTaskfile(path string) (*Taskfile, error) {
 	var tf Taskfile
 	dec := yaml.NewDecoder(f)
 	if err := dec.Decode(&tf); err != nil {
-		return nil, fmt.Errorf("decode yaml: %w", err)
+		return nil, fmt.Errorf("decode yaml in %s: %w", path, err)
 	}
 
 	// Recursively load imports
 	for _, importPath := range tf.Imports {
 		var importFile string
-		if isHTTPImport(importPath) {
-			importFile, err = downloadToTemp(importPath)
-			if err != nil {
-				return nil, fmt.Errorf("download import %s: %w", importPath, err)
-			}
-		} else if isGitImport(importPath) {
+		if isGitImport(importPath) {
 			importFile, err = cloneAndGetFile(importPath)
 			if err != nil {
 				return nil, fmt.Errorf("git import %s: %w", importPath, err)
+			}
+		} else if isHTTPImport(importPath) {
+			importFile, err = downloadToTemp(importPath)
+			if err != nil {
+				return nil, fmt.Errorf("download import %s: %w", importPath, err)
 			}
 		} else {
 			importFile = importPath
@@ -170,13 +172,19 @@ func cloneAndGetFile(gitImport string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	_, err = git.PlainClone(tmpDir, false, &git.CloneOptions{
-		URL:      repoURL,
-		Progress: os.Stdout,
-		Depth:    1,
-	})
-	if err != nil {
-		return "", err
+
+	fmt.Printf("Cloning repo %s...\n", repoURL)
+	cmd := exec.Command("git", "clone", "--depth=1", repoURL, tmpDir)
+	cmd.Stdout = nil // suppress output
+	cmd.Stderr = nil // suppress output
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("git clone failed: %w", err)
 	}
-	return filepath.Join(tmpDir, fileInRepo), nil
+	fmt.Printf("Clone complete: %s\n", repoURL)
+
+	fullPath := filepath.Join(tmpDir, fileInRepo)
+	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+		return "", fmt.Errorf("file %s not found in repo %s", fileInRepo, repoURL)
+	}
+	return fullPath, nil
 } 
