@@ -10,27 +10,30 @@ theme:
     - navigation.tabs
     - navigation.sections
     - navigation.expand
+    - navigation.top
     - search.highlight
     - search.share
     - search.suggest
+  icon:
+    repo: fontawesome/brands/github
 
 nav:
-  - Home: index.md
+  - Home: /
   - Getting Started:
-    - Installation: getting-started/installation.md
-    - Quick Start: getting-started/quickstart.md
+    - Installation: /getting-started/installation/
+    - Quick Start: /getting-started/quickstart/
   - User Guide:
-    - Taskfile Format: user-guide/taskfile-format.md
-    - Environment Variables: user-guide/environment-variables.md
-    - Secret Management: user-guide/secret-management.md
-    - Task Execution: user-guide/task-execution.md
+    - Taskfile Format: /user-guide/taskfile-format/
+    - Environment Variables: /user-guide/environment-variables/
+    - Secret Management: /user-guide/secret-management/
+    - Task Execution: /user-guide/task-execution/
   - Advanced Topics:
-    - Azure Key Vault Integration: advanced/azure-keyvault.md
-    - Task Dependencies: advanced/task-dependencies.md
-    - Importing Tasks: advanced/importing-tasks.md
+    - Azure Key Vault Integration: /advanced/azure-keyvault/
+    - Task Dependencies: /advanced/task-dependencies/
+    - Importing Tasks: /advanced/importing-tasks/
   - Contributing:
-    - Development Guide: contributing/development.md
-    - Code of Conduct: contributing/code-of-conduct.md
+    - Development Guide: /contributing/development/
+    - Code of Conduct: /contributing/code-of-conduct/
 
 markdown_extensions:
   - pymdownx.highlight
