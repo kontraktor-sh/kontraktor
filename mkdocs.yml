@@ -18,21 +18,21 @@ theme:
     repo: fontawesome/brands/github
 
 nav:
-  - Home: /
+  - Home: /kontraktor/
   - Getting Started:
-    - Installation: /getting-started/installation/
-    - Quick Start: /getting-started/quickstart/
+    - Installation: /kontraktor/getting-started/installation/
+    - Quick Start: /kontraktor/getting-started/quickstart/
   - User Guide:
-    - Taskfile Format: /user-guide/taskfile-format/
-    - Environment Variables: /user-guide/environment-variables/
-    - Secret Management: /user-guide/secret-management/
-    - Task Execution: /user-guide/task-execution/
+    - Taskfile Format: /kontraktor/user-guide/taskfile-format/
+    - Environment Variables: /kontraktor/user-guide/environment-variables/
+    - Secret Management: /kontraktor/user-guide/secret-management/
+    - Task Execution: /kontraktor/user-guide/task-execution/
   - Advanced Topics:
-    - Azure Key Vault Integration: /advanced/azure-keyvault/
-    - Task Dependencies: /advanced/task-dependencies/
-    - Importing Tasks: /advanced/importing-tasks/
+    - Azure Key Vault Integration: /kontraktor/advanced/azure-keyvault/
+    - Task Dependencies: /kontraktor/advanced/task-dependencies/
+    - Importing Tasks: /kontraktor/advanced/importing-tasks/
   - Contributing:
-    - Development Guide: /contributing/development/
+    - Development Guide: /kontraktor/contributing/development/
     - Code of Conduct: /contributing/code-of-conduct/
 
 markdown_extensions:
