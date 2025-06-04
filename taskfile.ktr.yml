@@ -43,14 +43,4 @@ tasks:
       - echo "Starting sequence..."
       - echo "Hello, world!"
       - echo "Greetings from Kontraktor!"
-      - echo "Sequence complete." 
-
-
-
-
-
-
-
-  
-  
-  
+      - echo "Sequence complete."

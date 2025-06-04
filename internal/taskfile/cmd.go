@@ -43,4 +43,4 @@ func (t *TaskCmd) UnmarshalYAML(value *yaml.Node) error {
 		return nil
 	}
 	return fmt.Errorf("invalid cmd entry: %v", value)
-} 
+}

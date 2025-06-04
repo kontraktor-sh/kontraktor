@@ -22,4 +22,4 @@ func ExecuteTask(taskName string, tf *Taskfile, visited map[string]bool) error {
 	}
 	visited[taskName] = false
 	return nil
-} 
+}

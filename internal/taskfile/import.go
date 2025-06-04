@@ -4,13 +4,13 @@ package taskfile
 
 import (
 	"fmt"
+	"gopkg.in/yaml.v3"
 	"io"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"gopkg.in/yaml.v3"
 )
 
 // ParseTaskfile reads and parses a taskfile.ktr.yml from the given path, recursively loading imports.
@@ -120,4 +120,4 @@ func cloneAndGetFile(gitImport string) (string, error) {
 		return "", fmt.Errorf("file %s not found in repo %s", fileInRepo, repoURL)
 	}
 	return fullPath, nil
-} 
+}

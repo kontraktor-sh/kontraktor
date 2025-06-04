@@ -10,4 +10,4 @@ type TaskArg struct {
 	Name    string      `yaml:"name"`
 	Type    string      `yaml:"type"`
 	Default interface{} `yaml:"default,omitempty"`
-} 
+}
