@@ -67,12 +67,12 @@ kontraktor run hello
 
 ## Documentation
 
-- [Getting Started](docs/getting-started/installation.md)
-- [Taskfile Format](docs/user-guide/taskfile-format.md)
-- [Task Dependencies](docs/user-guide/task-dependencies.md)
-- [Secret Management](docs/user-guide/secret-management.md)
-- [Azure Key Vault Integration](docs/advanced/azure-keyvault.md)
-- [Contributing](docs/contributing.md)
+- [Getting Started](./docs/getting-started/installation.md)
+- [Taskfile Format](./docs/user-guide/taskfile-format.md)
+- [Task Dependencies](./docs/user-guide/task-dependencies.md)
+- [Secret Management](./docs/user-guide/secret-management.md)
+- [Azure Key Vault Integration](./docs/advanced/azure-keyvault.md)
+- [Contributing](./docs/contributing.md)
 
 ## Examples
 
