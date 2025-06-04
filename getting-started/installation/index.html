@@ -844,6 +844,39 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Common Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-not-found" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command not found
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permission-denied" class="md-nav__link">
+    <span class="md-ellipsis">
+      Permission denied
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#go-version-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Go version issues
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -920,25 +953,21 @@
 </ul>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
 <h3 id="common-issues">Common Issues<a class="headerlink" href="#common-issues" title="Permanent link">&para;</a></h3>
-<ol>
-<li><strong>Command not found</strong></li>
+<h4 id="command-not-found">Command not found<a class="headerlink" href="#command-not-found" title="Permanent link">&para;</a></h4>
+<ul>
 <li>Ensure the installation directory is in your <code>$PATH</code></li>
-<li>
-<p>Try running <code>which kontraktor</code> to verify the installation location</p>
-</li>
-<li>
-<p><strong>Permission denied</strong></p>
-</li>
+<li>Try running <code>which kontraktor</code> to verify the installation location</li>
+</ul>
+<h4 id="permission-denied">Permission denied<a class="headerlink" href="#permission-denied" title="Permanent link">&para;</a></h4>
+<ul>
 <li>Check file permissions: <code>chmod +x /path/to/kontraktor</code></li>
-<li>
-<p>Ensure you have the necessary permissions for the installation directory</p>
-</li>
-<li>
-<p><strong>Go version issues</strong></p>
-</li>
+<li>Ensure you have the necessary permissions for the installation directory</li>
+</ul>
+<h4 id="go-version-issues">Go version issues<a class="headerlink" href="#go-version-issues" title="Permanent link">&para;</a></h4>
+<ul>
 <li>Verify your Go version: <code>go version</code></li>
 <li>Update Go if necessary</li>
-</ol>
+</ul>
 <p>If you encounter any other issues, please <a href="https://github.com/kontraktor-sh/kontraktor/issues">open an issue</a> on GitHub. </p>
 
 
