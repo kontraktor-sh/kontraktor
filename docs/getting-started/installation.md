@@ -64,15 +64,15 @@ Kontraktor uses a configuration file named `taskfile.ktr.yml` in your project di
 
 ### Common Issues
 
-1. **Command not found**
+#### Command not found
    - Ensure the installation directory is in your `$PATH`
    - Try running `which kontraktor` to verify the installation location
 
-2. **Permission denied**
+#### Permission denied
    - Check file permissions: `chmod +x /path/to/kontraktor`
    - Ensure you have the necessary permissions for the installation directory
 
-3. **Go version issues**
+#### Go version issues
    - Verify your Go version: `go version`
    - Update Go if necessary
 

@@ -49,22 +49,22 @@ tasks:
 
 ## Security Best Practices
 
-1. **Never Store Secrets in Taskfiles**
+### Never Store Secrets in Taskfiles
    - Keep all sensitive data in vaults
    - Don't commit secrets to version control
    - Use environment variables for non-sensitive configuration
 
-2. **Access Control**
+### Access Control
    - Use least privilege principle
    - Regularly rotate secrets
    - Monitor secret access
 
-3. **Secret Naming**
+### Secret Naming
    - Use descriptive names
    - Follow a consistent naming convention
    - Document secret purposes
 
-4. **Error Handling**
+### Error Handling
    - Handle missing secrets gracefully
    - Log secret access errors
    - Implement fallback mechanisms
