@@ -43,6 +43,7 @@ go install github.com/kontraktor-sh/kontraktor@latest
 
 1. Create a `taskfile.ktr.yml`:
 
+
 ```yaml
 version: "0.3"
 
