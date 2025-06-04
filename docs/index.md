@@ -26,10 +26,10 @@ Kontraktor is a powerful builder-helper that unifies environment configuration, 
 
 ## Quick Links
 
-- [Installation Guide](getting-started/installation.md)
-- [Quick Start Guide](getting-started/quickstart.md)
-- [Taskfile Format](user-guide/taskfile-format.md)
-- [Secret Management](user-guide/secret-management.md)
+- [Installation Guide](/docs/getting-started/installation.md)
+- [Quick Start Guide](/docs/getting-started/quickstart.md)
+- [Taskfile Format](/docs/user-guide/taskfile-format.md)
+- [Secret Management](/docs/user-guide/secret-management.md)
 
 ## Example Taskfile
 
@@ -52,7 +52,7 @@ tasks:
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](contributing/development.md) for more information.
+We welcome contributions! Please see our [Contributing Guide](/docs/contributing/development.md) for more information.
 
 ## License
 
