@@ -16,7 +16,7 @@ Currently, Kontraktor supports the following secret vaults:
 
 1. An Azure subscription
 2. An Azure Key Vault instance
-3. Proper authentication configured (see [Azure Key Vault Integration](advanced/azure-keyvault.md) for details)
+3. Proper authentication configured (see [Azure Key Vault Integration](/docs/advanced/azure-keyvault.md) for details)
 
 ### Configuration
 

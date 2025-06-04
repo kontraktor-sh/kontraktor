@@ -18,22 +18,22 @@ theme:
     repo: fontawesome/brands/github
 
 nav:
-  - Home: /kontraktor/
+  - Home: /docs/index.md
   - Getting Started:
-    - Installation: /kontraktor/getting-started/installation/
-    - Quick Start: /kontraktor/getting-started/quickstart/
+    - Installation: /docs/getting-started/installation/
+    - Quick Start: /docs/getting-started/quickstart/
   - User Guide:
-    - Taskfile Format: /kontraktor/user-guide/taskfile-format/
-    - Environment Variables: /kontraktor/user-guide/environment-variables/
-    - Secret Management: /kontraktor/user-guide/secret-management/
-    - Task Execution: /kontraktor/user-guide/task-execution/
+    - Taskfile Format: /docs/user-guide/taskfile-format/
+    - Environment Variables: /docs/user-guide/environment-variables/
+    - Secret Management: /docs/user-guide/secret-management/
+    - Task Execution: /docs/user-guide/task-execution/
   - Advanced Topics:
-    - Azure Key Vault Integration: /kontraktor/advanced/azure-keyvault/
-    - Task Dependencies: /kontraktor/advanced/task-dependencies/
-    - Importing Tasks: /kontraktor/advanced/importing-tasks/
+    - Azure Key Vault Integration: /docs/advanced/azure-keyvault/
+    - Task Dependencies: /docs/advanced/task-dependencies/
+    - Importing Tasks: /docs/advanced/importing-tasks/
   - Contributing:
-    - Development Guide: /kontraktor/contributing/development/
-    - Code of Conduct: /contributing/code-of-conduct/
+    - Development Guide: /docs/contributing/development/
+    - Code of Conduct: /docs/contributing/code-of-conduct/
 
 markdown_extensions:
   - pymdownx.highlight
