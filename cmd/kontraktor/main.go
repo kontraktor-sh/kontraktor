@@ -152,33 +152,6 @@ func findKtrYAMLFiles() ([]string, error) {
 	return files, nil
 }
 
-func executeTask(taskName string, tf *taskfile.Taskfile, visited map[string]bool) error {
-	if visited[taskName] {
-		return fmt.Errorf("circular reference detected at task '%s'", taskName)
-	}
-	visited[taskName] = true
-	task, ok := tf.Tasks[taskName]
-	if !ok {
-		return fmt.Errorf("task '%s' not found", taskName)
-	}
-	fmt.Printf("Running task '%s': %s\n", taskName, task.Desc)
-	for i, cmd := range task.Cmds {
-		if cmd.Task != "" {
-			fmt.Printf("[%d/%d] > task: %s\n", i+1, len(task.Cmds), cmd.Task)
-			if err := executeTask(cmd.Task, tf, visited); err != nil {
-				return err
-			}
-			continue
-		}
-		fmt.Printf("[%d/%d] $ %s\n", i+1, len(task.Cmds), cmd.Cmd)
-		if err := runShellCommand(cmd.Cmd, nil); err != nil {
-			return fmt.Errorf("command failed: %w", err)
-		}
-	}
-	visited[taskName] = false
-	return nil
-}
-
 func executeTaskWithArgs(taskName string, tf *taskfile.Taskfile, visited map[string]bool, args map[string]string, parentArgs map[string]string, stepPath []int, parentEnv map[string]string) error {
 	if visited[taskName] {
 		return fmt.Errorf("circular reference detected at task '%s'", taskName)
