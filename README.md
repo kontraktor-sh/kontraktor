@@ -2,8 +2,6 @@
 
 [![Build and Test](https://github.com/kontraktor-sh/kontraktor/actions/workflows/build.yml/badge.svg)](https://github.com/kontraktor-sh/kontraktor/actions/workflows/build.yml)
 [![Release](https://github.com/kontraktor-sh/kontraktor/actions/workflows/release.yml/badge.svg)](https://github.com/kontraktor-sh/kontraktor/actions/workflows/release.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/kontraktor-sh/kontraktor)](https://goreportcard.com/report/github.com/kontraktor-sh/kontraktor)
-[![GoDoc](https://godoc.org/github.com/kontraktor-sh/kontraktor?status.svg)](https://godoc.org/github.com/kontraktor-sh/kontraktor)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 Kontraktor is a powerful task runner and automation tool that helps you manage and execute tasks with ease. It provides a simple YAML-based configuration format and supports various features like task dependencies, environment variables, and secret management.
