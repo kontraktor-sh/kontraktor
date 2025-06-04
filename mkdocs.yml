@@ -31,9 +31,7 @@ nav:
     - Azure Key Vault Integration: /kontraktor/advanced/azure-keyvault/
     - Task Dependencies: /kontraktor/advanced/task-dependencies/
     - Importing Tasks: /kontraktor/advanced/importing-tasks/
-  - Contributing:
-    - Development Guide: /kontraktor/contributing/development/
-    - Code of Conduct: /kontraktor/contributing/code-of-conduct/
+  - Contributing: /kontraktor/contributing
 
 markdown_extensions:
   - pymdownx.highlight
