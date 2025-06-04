@@ -284,34 +284,34 @@ Thank you for your interest in contributing to Kontraktor! This guide will help 
 
 ### Communication
 
-1. **Issues**
+#### Issues
    - Use templates
    - Provide context
    - Be specific
 
-2. **Discussions**
+### Discussions
    - Use appropriate channels
    - Stay on topic
    - Be constructive
 
-3. **Pull Requests**
+### Pull Requests
    - Follow guidelines
    - Be responsive
    - Keep changes focused
 
 ## Getting Help
 
-1. **Documentation**
+### Documentation
    - Read the docs
    - Check examples
    - Search issues
 
-2. **Community**
+### Community
    - Join discussions
    - Ask questions
    - Share ideas
 
-3. **Support**
+### Support
    - Open issues
    - Contact maintainers
    - Use chat channels 
