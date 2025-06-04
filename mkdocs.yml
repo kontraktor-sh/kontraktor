@@ -1,8 +1,8 @@
 site_name: Kontraktor Documentation
 site_description: Documentation for Kontraktor - A builder-helper for environment configuration, secret aggregation, and developer task automation
 site_author: Kontraktor Team
-repo_url: https://github.com/kontraktor-sh/docs
-repo_name: kontraktor-sh/docs
+repo_url: https://github.com/kontraktor-sh/kontraktor
+repo_name: kontraktor-sh/kontraktor
 
 theme:
   name: material
