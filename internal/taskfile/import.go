@@ -4,13 +4,14 @@ package taskfile
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"io"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 // ParseTaskfile reads and parses a taskfile.ktr.yml from the given path, recursively loading imports.
@@ -28,6 +29,11 @@ func ParseTaskfile(path string) (*Taskfile, error) {
 	dec := yaml.NewDecoder(f)
 	if err := dec.Decode(&tf); err != nil {
 		return nil, fmt.Errorf("decode yaml in %s: %w", path, err)
+	}
+
+	// Validate the taskfile
+	if err := tf.Validate(); err != nil {
+		return nil, fmt.Errorf("invalid taskfile: %w", err)
 	}
 
 	// Recursively load imports

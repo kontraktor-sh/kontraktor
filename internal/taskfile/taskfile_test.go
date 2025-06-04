@@ -26,7 +26,10 @@ func TestParseTaskfile(t *testing.T) {
 				Desc: "A simple hello world task",
 				Cmds: []TaskCmd{
 					{
-						Cmd: "echo 'Hello, World!'",
+						Type: "bash",
+						Content: map[string]interface{}{
+							"command": "echo 'Hello, World!'",
+						},
 					},
 				},
 			},
@@ -42,7 +45,9 @@ tasks:
   hello:
     desc: A simple hello world task
     cmds:
-      - echo 'Hello, World!'
+      - type: bash
+        content:
+          command: echo 'Hello, World!'
 `
 	err = os.WriteFile(taskfilePath, []byte(taskfileContent), 0644)
 	assert.NoError(t, err)
@@ -85,10 +90,8 @@ tasks:
 					assert.Equal(t, expectedTask.Environment, actualTask.Environment)
 					assert.Equal(t, len(expectedTask.Cmds), len(actualTask.Cmds))
 					for i, expectedCmd := range expectedTask.Cmds {
-						assert.Equal(t, expectedCmd.Cmd, actualTask.Cmds[i].Cmd)
-						assert.Equal(t, expectedCmd.Task, actualTask.Cmds[i].Task)
-						assert.Equal(t, expectedCmd.Uses, actualTask.Cmds[i].Uses)
-						assert.Equal(t, expectedCmd.Args, actualTask.Cmds[i].Args)
+						assert.Equal(t, expectedCmd.Type, actualTask.Cmds[i].Type)
+						assert.Equal(t, expectedCmd.Content, actualTask.Cmds[i].Content)
 					}
 				}
 			}
@@ -107,7 +110,10 @@ func TestTaskCmdUnmarshalYAML(t *testing.T) {
 			name: "simple command",
 			yaml: "echo 'Hello, World!'",
 			expectedCmd: TaskCmd{
-				Cmd: "echo 'Hello, World!'",
+				Type: "bash",
+				Content: map[string]interface{}{
+					"command": "echo 'Hello, World!'",
+				},
 			},
 			expectedError: false,
 		},
@@ -115,7 +121,10 @@ func TestTaskCmdUnmarshalYAML(t *testing.T) {
 			name: "task reference",
 			yaml: "task: hello",
 			expectedCmd: TaskCmd{
-				Task: "hello",
+				Type: "task",
+				Content: map[string]interface{}{
+					"name": "hello",
+				},
 			},
 			expectedError: false,
 		},
@@ -127,9 +136,12 @@ args:
   image: test-image
 `,
 			expectedCmd: TaskCmd{
-				Uses: "docker-build",
-				Args: map[string]interface{}{
-					"image": "test-image",
+				Type: "uses",
+				Content: map[string]interface{}{
+					"uses": "docker-build",
+					"args": map[string]interface{}{
+						"image": "test-image",
+					},
 				},
 			},
 			expectedError: false,

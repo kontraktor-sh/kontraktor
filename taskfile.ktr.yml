@@ -5,7 +5,6 @@ imports:
 
 environment:
   FOO: bar
-  PATH: /custom/path:${PATH}
 
 vaults:
   azure_keyvault:
@@ -18,29 +17,7 @@ tasks:
   hello:
     desc: "Print env"
     cmds:
-      - echo "FOO is $FOO"
-  hello2:
-    desc: "Print hello world"
-    args:
-      - name: username
-        type: string
-        default: "rafael"
-    environment:
-      FOO: "bar2"
-    cmds:
-      - echo "Hello, ${username}! ${secrets.FOO2}"
-      - task: greet
-      - uses: docker-build
-        args:
-          image: "rafael/kontraktor"
-  greet:
-    desc: "Print a custom greeting"
-    cmds:
-      - echo "Greetings from Kontraktor!"
-  sequence:
-    desc: "Run hello and greet in sequence"
-    cmds:
-      - echo "Starting sequence..."
-      - echo "Hello, world!"
-      - echo "Greetings from Kontraktor!"
-      - echo "Sequence complete."
+      - type: bash
+        content:
+          command: echo "FOO is ${FOO}"
+  

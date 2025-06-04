@@ -15,6 +15,7 @@ Kontraktor is a powerful task runner and automation tool that helps you manage a
 - **Shell Command Execution**: Run shell commands with proper environment setup
 - **Task Arguments**: Define and validate task arguments
 - **Extensible**: Add support for more secret vaults and features
+- **Task Imports**: Import tasks from other taskfiles or Git repositories
 
 ## Installation
 
@@ -45,11 +46,16 @@ go install github.com/kontraktor-sh/kontraktor@latest
 ```yaml
 version: "0.3"
 
+environment:
+  GREETING: "Hello"
+
 tasks:
   hello:
     desc: Say hello
     cmds:
-      - echo "Hello, World!"
+      - type: bash
+        content:
+          command: echo "${GREETING}, World!"
 ```
 
 2. Run the task:
@@ -78,7 +84,9 @@ tasks:
   build:
     desc: Build the application
     cmds:
-      - go build -o app ./cmd/app
+      - type: bash
+        content:
+          command: go build -o app ./cmd/app
 ```
 
 ### Task with Dependencies
@@ -90,13 +98,19 @@ tasks:
   test:
     desc: Run tests
     cmds:
-      - go test ./...
+      - type: bash
+        content:
+          command: go test ./...
 
   build:
     desc: Build the application
-    deps: [test]
     cmds:
-      - go build -o app ./cmd/app
+      - type: task
+        content:
+          name: test
+      - type: bash
+        content:
+          command: go build -o app ./cmd/app
 ```
 
 ### Task with Environment Variables
@@ -113,7 +127,9 @@ tasks:
     environment:
       GO_ENV: production
     cmds:
-      - echo "Deploying to ${GO_ENV}..."
+      - type: bash
+        content:
+          command: echo "Deploying to ${GO_ENV}..."
 ```
 
 ### Task with Azure Key Vault Secrets
@@ -133,8 +149,32 @@ tasks:
   deploy:
     desc: Deploy with secrets
     cmds:
-      - echo "Using API key: ${API_KEY}"
-      - echo "Using DB password: ${DB_PASSWORD}"
+      - type: bash
+        content:
+          command: echo "Using API key: ${API_KEY}"
+      - type: bash
+        content:
+          command: echo "Using DB password: ${DB_PASSWORD}"
+```
+
+### Task with Imports
+
+```yaml
+version: "0.3"
+
+imports:
+  - https://github.com/kontraktor-sh/kontraktor.git//templates/docker.ktr.yml
+
+tasks:
+  build:
+    desc: Build using imported tasks
+    cmds:
+      - type: task
+        content:
+          name: docker-build
+          args:
+            image: my-app
+            tag: latest
 ```
 
 ## Contributing

@@ -7,7 +7,11 @@ The Kontraktor taskfile is written in YAML format and uses the `.ktr.yml` extens
 ```yaml
 version: "0.3"  # Required: Version of the taskfile format
 
-environment:     # Optional: Global environment variables
+imports:        # Optional: Import tasks from other taskfiles
+  - path/to/taskfile.ktr.yml
+  - https://github.com/user/repo.git//path/to/taskfile.ktr.yml
+
+environment:    # Optional: Global environment variables
   KEY: value
 
 vaults:         # Optional: Secret vault configurations
@@ -27,12 +31,28 @@ tasks:          # Required: Task definitions
     environment:
       KEY: value
     cmds:
-      - command or task reference
+      - type: bash
+        content:
+          command: command-string
+      - type: task
+        content:
+          name: task-name
+          args:
+            key: value
 ```
 
 ## Version
 
 The `version` field is required and specifies the version of the taskfile format. Currently, only version "0.3" is supported.
+
+## Imports
+
+The `imports` field allows you to import tasks from other taskfiles. You can import from:
+- Local files
+- HTTP(S) URLs
+- Git repositories (using the format `https://github.com/user/repo.git//path/to/file`)
+
+Imported tasks are merged with the main taskfile, with tasks in the main file taking precedence.
 
 ## Environment Variables
 
@@ -53,8 +73,12 @@ tasks:
     environment:
       TASK_VAR: task-value
     cmds:
-      - echo "${GLOBAL_VAR}"  # Uses global variable
-      - echo "${TASK_VAR}"   # Uses task variable
+      - type: bash
+        content:
+          command: echo "${GLOBAL_VAR}"  # Uses global variable
+      - type: bash
+        content:
+          command: echo "${TASK_VAR}"   # Uses task variable
 ```
 
 ## Tasks
@@ -83,28 +107,40 @@ tasks:
 
 ### Task Commands
 
-Commands can be:
+Commands can be of different types:
 
-1. Shell commands:
+1. Bash commands:
    ```yaml
    cmds:
-     - echo "Hello, World!"
-     - ls -la
+     - type: bash
+       content:
+         command: echo "Hello, World!"
+     - type: bash
+       content:
+         command: ls -la
    ```
 
 2. Task references:
    ```yaml
    cmds:
-     - task: setup
+     - type: task
+       content:
+         name: setup
+         args:
+           key: value
    ```
 
-3. Uses references (with arguments):
+3. Docker commands:
    ```yaml
    cmds:
-     - uses: docker-build
-       args:
-         image: my-image
-         tag: latest
+     - type: docker
+       content:
+         image: node:latest
+         command: ["npm", "start"]
+         environment:
+           NODE_ENV: production
+         volumes:
+           ./src:/app/src
    ```
 
 ## Secret Management
@@ -121,22 +157,6 @@ vaults:
         DB_PASSWORD: db-secret
 ```
 
-## Task Dependencies
-
-Tasks can depend on other tasks through the `task` command:
-
-```yaml
-tasks:
-  setup:
-    cmds:
-      - echo "Setting up..."
-
-  build:
-    cmds:
-      - task: setup
-      - echo "Building..."
-```
-
 ## Variable Substitution
 
 Variables can be substituted in commands using `${VAR_NAME}` syntax:
@@ -148,7 +168,9 @@ tasks:
       - name: name
         default: World
     cmds:
-      - echo "Hello, ${name}!"
+      - type: bash
+        content:
+          command: echo "Hello, ${name}!"
 ```
 
 ## Best Practices
@@ -173,12 +195,20 @@ tasks:
    - Use vaults for all sensitive data
    - Use descriptive secret names
 
+5. **Command Structure**
+   - Always use the explicit command type and content structure
+   - Group related commands together
+   - Use meaningful command descriptions
+
 ## Examples
 
 ### Complete Example
 
 ```yaml
 version: "0.3"
+
+imports:
+  - https://github.com/kontraktor-sh/kontraktor.git//templates/docker.ktr.yml
 
 environment:
   PROJECT_NAME: my-project
@@ -196,8 +226,12 @@ tasks:
   setup:
     desc: Setup the build environment
     cmds:
-      - mkdir -p ${BUILD_DIR}
-      - echo "Setup complete"
+      - type: bash
+        content:
+          command: mkdir -p ${BUILD_DIR}
+      - type: bash
+        content:
+          command: echo "Setup complete"
 
   build:
     desc: Build the project
@@ -206,9 +240,15 @@ tasks:
         type: string
         default: 1.0.0
     cmds:
-      - task: setup
-      - echo "Building ${PROJECT_NAME} version ${version}"
-      - touch ${BUILD_DIR}/output.txt
+      - type: task
+        content:
+          name: setup
+      - type: bash
+        content:
+          command: echo "Building ${PROJECT_NAME} version ${version}"
+      - type: bash
+        content:
+          command: touch ${BUILD_DIR}/output.txt
 
   deploy:
     desc: Deploy to environment
@@ -219,7 +259,13 @@ tasks:
     environment:
       DEPLOY_ENV: ${env}
     cmds:
-      - task: build
-      - echo "Deploying to ${DEPLOY_ENV}"
-      - echo "Using API key: ${API_KEY}"
+      - type: task
+        content:
+          name: build
+      - type: bash
+        content:
+          command: echo "Deploying to ${DEPLOY_ENV}"
+      - type: bash
+        content:
+          command: echo "Using API key: ${API_KEY}"
 ``` 

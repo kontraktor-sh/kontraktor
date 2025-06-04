@@ -1,124 +1,130 @@
 # Task Dependencies
 
-This guide explains how to work with task dependencies in Kontraktor.
+Kontraktor allows you to create complex workflows by defining dependencies between tasks. This document explains how to use task dependencies effectively.
 
-## Basic Dependencies
+## Basic Task References
 
-Tasks can depend on other tasks using the `deps` field:
+Tasks can reference other tasks using the `task` command type:
+
+```yaml
+version: "0.3"
+
+tasks:
+  setup:
+    desc: Setup the environment
+    cmds:
+      - type: bash
+        content:
+          command: echo "Setting up environment..."
+      - type: bash
+        content:
+          command: mkdir -p build
+
+  build:
+    desc: Build the project
+    cmds:
+      - type: task
+        content:
+          name: setup
+      - type: bash
+        content:
+          command: echo "Building project..."
+      - type: bash
+        content:
+          command: touch build/output.txt
+
+  test:
+    desc: Run tests
+    cmds:
+      - type: task
+        content:
+          name: build
+      - type: bash
+        content:
+          command: echo "Running tests..."
+```
+
+## Passing Arguments to Dependent Tasks
+
+You can pass arguments to dependent tasks:
 
 ```yaml
 version: "0.3"
 
 tasks:
   build:
-    desc: Build the application
+    desc: Build with version
+    args:
+      - name: version
+        type: string
+        default: 1.0.0
     cmds:
-      - echo "Building..."
-
-  test:
-    desc: Run tests
-    deps: [build]
-    cmds:
-      - echo "Testing..."
+      - type: bash
+        content:
+          command: echo "Building version ${version}"
 
   deploy:
-    desc: Deploy the application
-    deps: [test]
+    desc: Deploy the build
     cmds:
-      - echo "Deploying..."
+      - type: task
+        content:
+          name: build
+          args:
+            version: 2.0.0
+      - type: bash
+        content:
+          command: echo "Deploying..."
 ```
 
-When you run `kontraktor run deploy`, it will execute tasks in this order:
-1. `build`
-2. `test`
-3. `deploy`
+## Environment Variable Inheritance
 
-## Multiple Dependencies
-
-A task can depend on multiple other tasks:
+Dependent tasks inherit environment variables from their parent tasks:
 
 ```yaml
+version: "0.3"
+
+environment:
+  GLOBAL_VAR: global
+
 tasks:
-  prepare:
-    desc: Prepare environment
+  setup:
+    desc: Setup with environment
+    environment:
+      SETUP_VAR: setup-value
     cmds:
-      - echo "Preparing..."
+      - type: bash
+        content:
+          command: echo "Setup: ${SETUP_VAR}"
 
   build:
-    desc: Build the application
+    desc: Build with inherited environment
+    environment:
+      BUILD_VAR: build-value
     cmds:
-      - echo "Building..."
-
-  deploy:
-    desc: Deploy the application
-    deps: [prepare, build]
-    cmds:
-      - echo "Deploying..."
-```
-
-## Conditional Dependencies
-
-You can make dependencies conditional using environment variables:
-
-```yaml
-tasks:
-  build:
-    desc: Build the application
-    cmds:
-      - echo "Building..."
-
-  test:
-    desc: Run tests
-    deps: [build]
-    cmds:
-      - echo "Testing..."
-
-  deploy:
-    desc: Deploy the application
-    deps: [test]
-    cmds:
-      - echo "Deploying..."
-
-  deploy-skip-tests:
-    desc: Deploy without running tests
-    deps: [build]
-    cmds:
-      - echo "Deploying without tests..."
-```
-
-## Dependency Cycles
-
-Kontraktor detects and prevents dependency cycles. For example, this would cause an error:
-
-```yaml
-tasks:
-  task1:
-    deps: [task2]
-    cmds:
-      - echo "Task 1"
-
-  task2:
-    deps: [task1]
-    cmds:
-      - echo "Task 2"
+      - type: task
+        content:
+          name: setup
+      - type: bash
+        content:
+          command: echo "Build: ${BUILD_VAR}, ${SETUP_VAR}, ${GLOBAL_VAR}"
 ```
 
 ## Best Practices
 
-1. **Keep Dependencies Simple**
-   - Avoid deep dependency chains
-   - Use clear, meaningful task names
-   - Document complex dependency relationships
-
-2. **Task Organization**
+1. **Task Organization**
    - Group related tasks together
    - Use consistent naming conventions
    - Consider using task prefixes for organization
 
-3. **Error Handling**
+2. **Error Handling**
    - Handle errors in dependent tasks
    - Use appropriate exit codes
    - Consider using `--force` for specific cases
+
+3. **Task Dependencies**
+   - Keep dependency chains short and clear
+   - Avoid circular dependencies
+   - Document task dependencies in descriptions
 
 ## Examples
 
@@ -131,37 +137,65 @@ tasks:
   clean:
     desc: Clean build artifacts
     cmds:
-      - rm -rf build/
-      - rm -rf dist/
+      - type: bash
+        content:
+          command: rm -rf build/
+      - type: bash
+        content:
+          command: rm -rf dist/
 
   install-deps:
     desc: Install dependencies
     cmds:
-      - npm install
+      - type: bash
+        content:
+          command: npm install
 
   lint:
     desc: Run linter
-    deps: [install-deps]
     cmds:
-      - npm run lint
+      - type: task
+        content:
+          name: install-deps
+      - type: bash
+        content:
+          command: npm run lint
 
   test:
     desc: Run tests
-    deps: [install-deps]
     cmds:
-      - npm test
+      - type: task
+        content:
+          name: install-deps
+      - type: bash
+        content:
+          command: npm test
 
   build:
     desc: Build the application
-    deps: [install-deps, lint, test]
     cmds:
-      - npm run build
+      - type: task
+        content:
+          name: install-deps
+      - type: task
+        content:
+          name: lint
+      - type: task
+        content:
+          name: test
+      - type: bash
+        content:
+          command: npm run build
 
   deploy:
     desc: Deploy to production
-    deps: [build]
     cmds:
-      - npm run deploy
+      - type: task
+        content:
+          name: build
+      - type: bash
+        content:
+          command: npm run deploy
 ```
 
 ### CI/CD Pipeline
@@ -173,42 +207,69 @@ tasks:
   validate:
     desc: Validate code
     cmds:
-      - echo "Validating code..."
+      - type: bash
+        content:
+          command: echo "Validating code..."
 
   security-scan:
     desc: Run security scan
     cmds:
-      - echo "Running security scan..."
+      - type: bash
+        content:
+          command: echo "Running security scan..."
 
   build:
     desc: Build artifacts
-    deps: [validate, security-scan]
     cmds:
-      - echo "Building artifacts..."
+      - type: task
+        content:
+          name: validate
+      - type: task
+        content:
+          name: security-scan
+      - type: bash
+        content:
+          command: echo "Building artifacts..."
 
   test:
     desc: Run tests
-    deps: [build]
     cmds:
-      - echo "Running tests..."
+      - type: task
+        content:
+          name: build
+      - type: bash
+        content:
+          command: echo "Running tests..."
 
   package:
     desc: Package artifacts
-    deps: [test]
     cmds:
-      - echo "Packaging artifacts..."
+      - type: task
+        content:
+          name: test
+      - type: bash
+        content:
+          command: echo "Packaging artifacts..."
 
   deploy-staging:
     desc: Deploy to staging
-    deps: [package]
     cmds:
-      - echo "Deploying to staging..."
+      - type: task
+        content:
+          name: package
+      - type: bash
+        content:
+          command: echo "Deploying to staging..."
 
   deploy-prod:
     desc: Deploy to production
-    deps: [deploy-staging]
     cmds:
-      - echo "Deploying to production..."
+      - type: task
+        content:
+          name: deploy-staging
+      - type: bash
+        content:
+          command: echo "Deploying to production..."
 ```
 
 ### Multi-Environment Deployment
@@ -219,38 +280,30 @@ version: "0.3"
 tasks:
   build:
     desc: Build the application
+    args:
+      - name: env
+        type: string
+        default: dev
     cmds:
-      - echo "Building..."
+      - type: bash
+        content:
+          command: echo "Building for ${env}"
 
-  test:
-    desc: Run tests
-    deps: [build]
+  deploy:
+    desc: Deploy to environment
+    args:
+      - name: env
+        type: string
+        default: dev
     cmds:
-      - echo "Testing..."
-
-  deploy-dev:
-    desc: Deploy to development
-    deps: [test]
-    environment:
-      ENV: development
-    cmds:
-      - echo "Deploying to ${ENV}..."
-
-  deploy-staging:
-    desc: Deploy to staging
-    deps: [deploy-dev]
-    environment:
-      ENV: staging
-    cmds:
-      - echo "Deploying to ${ENV}..."
-
-  deploy-prod:
-    desc: Deploy to production
-    deps: [deploy-staging]
-    environment:
-      ENV: production
-    cmds:
-      - echo "Deploying to ${ENV}..."
+      - type: task
+        content:
+          name: build
+          args:
+            env: ${env}
+      - type: bash
+        content:
+          command: echo "Deploying to ${env}"
 ```
 
 ## Troubleshooting

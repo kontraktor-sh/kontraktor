@@ -14,9 +14,11 @@ func ExecuteTask(taskName string, tf *Taskfile, visited map[string]bool) error {
 		return fmt.Errorf("task '%s' not found", taskName)
 	}
 	for _, cmd := range task.Cmds {
-		if cmd.Task != "" {
-			if err := ExecuteTask(cmd.Task, tf, visited); err != nil {
-				return err
+		if cmd.Type == "task" {
+			if name, ok := cmd.Content["name"].(string); ok && name != "" {
+				if err := ExecuteTask(name, tf, visited); err != nil {
+					return err
+				}
 			}
 		}
 	}
