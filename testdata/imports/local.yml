@@ -1,0 +1,10 @@
+version: "0.3"
+environment:
+  IMPORTED_VAR: "imported_value"
+tasks:
+  imported:
+    desc: "An imported task"
+    cmds:
+      - type: bash
+        content:
+          command: echo "Hello from imported task" 

@@ -3,6 +3,7 @@ package vars
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 // VariableType represents the type of variable
@@ -76,24 +77,47 @@ func NewSubstitutor() *Substitutor {
 
 // Substitute performs variable substitution using the context
 func (s *Substitutor) Substitute(input string, ctx *Context) (string, error) {
-	return s.varRegex.ReplaceAllStringFunc(input, func(match string) string {
-		// Extract variable name from ${VAR_NAME}
-		varName := match[2 : len(match)-1]
+	var err error
+	result := input
 
-		// Get variable from context
-		variable, err := ctx.GetVariable(varName)
-		if err != nil {
-			return match // Return original if not found
+	// Keep substituting until no more variables are found
+	for {
+		// Check if there are any variables to substitute
+		if !s.varRegex.MatchString(result) {
+			break
 		}
 
-		// Perform nested substitution on the value
-		substituted, err := s.Substitute(variable.Value, ctx)
-		if err != nil {
-			return match // Return original if substitution fails
-		}
+		// Replace all variables in the current iteration
+		result = s.varRegex.ReplaceAllStringFunc(result, func(match string) string {
+			// Extract variable name from ${VAR_NAME}
+			varName := match[2 : len(match)-1]
 
-		return substituted
-	}), nil
+			// Handle escaped variables
+			if strings.HasPrefix(varName, "$") {
+				return "${" + varName[1:] + "}"
+			}
+
+			// Get variable from context
+			variable, err := ctx.GetVariable(varName)
+			if err != nil {
+				return match // Return original if not found
+			}
+
+			return variable.Value
+		})
+
+		// If no changes were made in this iteration, break
+		if result == input {
+			break
+		}
+	}
+
+	// Check if there are any remaining unsubstituted variables
+	if s.varRegex.MatchString(result) {
+		return "", fmt.Errorf("undefined variables found in: %s", result)
+	}
+
+	return result, err
 }
 
 // SubstituteMap performs variable substitution on a map of strings
